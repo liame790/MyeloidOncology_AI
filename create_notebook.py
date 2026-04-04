@@ -211,55 +211,95 @@ print(f"Regularized LogReg Adverse Event Risk AUROC: {auc_a:.3f}")"""
 
     # --- CELL 6: Explanation & Code for Agentic AI ---
     md_6 = """## II. E. Regulatory Documentation and Submission Engine
-### Agentic Automation Layer (LLM Integration)
+### Agentic Automation Layer (LangChain & HuggingFace Integration)
 
 **Methodology:**
 *   **Objective:** Accelerate regulatory preparedness and reduce administrative workload by linking predictive outputs directly to compliance standards.
-*   **Architecture:** Simulates an LLM-driven autonomous agent via a Retrieval-Augmented Generation (RAG) pattern. The agent ingests internal clinical assignments and cross-references them with loaded FDA policy documents (e.g., Predetermined Change Control Plans for AI/ML).
-*   **Traceability:** Ensures 21 CFR Part 11 compliance by attaching regulatory justifications to algorithmic patient matching.
+*   **Architecture:** Implements an LLM-driven autonomous agent using **LangChain**, **ChromaDB**, and **HuggingFace**. A Retrieval-Augmented Generation (RAG) architecture ingests internal clinical assignments and cross-references them with loaded FDA policy documents (e.g., Predetermined Change Control Plans).
+*   **Models:** Utilizes `all-MiniLM-L6-v2` for semantic embeddings and a local open-source LLM pipeline (`TinyLlama-1.1B-Chat`) to autonomously generate structured recommendations without relying on external API keys.
 
 **Expected Output:**
-*   Confirmation of the initialized FDA Agentic Advisor and its knowledge base load sequence."""
+*   Initialization of the LangChain VectorStore.
+*   Loading of the HuggingFace LLM Pipeline."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_6))
 
-    agent_code = """class FDAAgenticAdvisor:
-    def __init__(self, compliance_docs):
-        self.docs = compliance_docs
+    agent_code = """from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
+from langchain_community.vectorstores import Chroma
+from langchain_core.prompts import PromptTemplate
+from langchain_core.documents import Document
+import json
+import torch
+from transformers import pipeline
+import warnings
+warnings.filterwarnings('ignore')
+
+class LangChainFDAAdvisor:
+    def __init__(self, docs_path):
+        # 1. Load FDA Knowledge Base
+        with open(docs_path, 'r') as f:
+            docs = json.load(f)
+            
+        lc_docs = [Document(page_content=d['content'], metadata={"title": d['title']}) for d in docs]
+        
+        # 2. Setup Vector Store (Embeddings)
+        print("Loading HuggingFace Embeddings (all-MiniLM-L6-v2)...")
+        self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        self.vectorstore = Chroma.from_documents(lc_docs, self.embeddings)
+        self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 2})
+        
+        # 3. Setup Local HuggingFace LLM Pipeline
+        print("Loading Local LLM (TinyLlama-1.1B) for Agentic Inference...")
+        pipe = pipeline(
+            "text-generation",
+            model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+            max_new_tokens=250,
+            temperature=0.1,
+            repetition_penalty=1.1,
+            device="cpu"  # Running on CPU for broad compatibility
+        )
+        self.llm = HuggingFacePipeline(pipeline=pipe)
+        
+        # 4. Agentic Prompt Template
+        template = \"\"\"<|system|>
+You are an expert FDA Clinical Informatics Agent. You review patient clinical data, ML predictions, and FDA compliance guidelines to make clear, actionable clinical trial recommendations.
+Use the following FDA guidance as your regulatory framework:
+{context}
+</s>
+<|user|>
+Patient Data: {patient_data}
+ML Predictions: {ml_results}
+
+Based on the above, provide a short, structured clinical recommendation. Ensure you state how it complies with the provided FDA guidance.
+</s>
+<|assistant|>
+\"\"\"
+        self.prompt = PromptTemplate(template=template, input_variables=["context", "patient_data", "ml_results"])
         
     def recommend(self, patient_data, ml_results):
-        elig = "Eligible" if ml_results['elig_prob'] > 0.5 else "Ineligible"
-        resp = "High Probability" if ml_results['resp_prob'] > 0.6 else "Moderate/Low"
-        ae = "High Risk" if ml_results['ae_prob'] > 0.4 else "Standard Risk"
+        # Retrieve context via RAG
+        query = "FDA Predetermined Change Control Plan and AI/ML eligibility rules"
+        relevant_docs = self.retriever.invoke(query)
+        # Using chr(10) instead of literal slash-n to avoid code generation parsing bugs
+        context = chr(10).join([f"- {doc.page_content}" for doc in relevant_docs])
         
-        # Simulating Retrieval-Augmented Generation (RAG)
-        pccp_guidance = [d for d in self.docs if d['doc_id'] == 'FDA-AI-ML-GUIDANCE'][0]['content']
+        # Format ML Results
+        ml_str = f"Eligibility Prob: {ml_results['elig_prob']:.2f}, Response Forecast: {ml_results['resp_prob']:.2f}, AE Risk: {ml_results['ae_prob']:.2f}"
         
-        recommendation = f"### 🛡️ Agentic Clinical Assignment & Compliance Report\\n"
-        recommendation += f"**Subject ID:** `{patient_data['PatientID']}`\\n\\n"
-        recommendation += f"| Metric | ML Output | Assessment |\\n"
-        recommendation += f"| :--- | :--- | :--- |\\n"
-        recommendation += f"| Protocol Eligibility | {ml_results['elig_prob']:.2f} | **{elig}** |\\n"
-        recommendation += f"| D28 Remission Forecast | {ml_results['resp_prob']:.2f} | **{resp}** |\\n"
-        recommendation += f"| Gr 3-4 Toxicity Risk | {ml_results['ae_prob']:.2f} | **{ae}** |\\n\\n"
+        # Execute LLM Chain
+        chain = self.prompt | self.llm
+        result = chain.invoke({"context": context, "patient_data": str(patient_data), "ml_results": ml_str})
         
-        recommendation += "#### 📌 Recommended Clinical Action\\n"
-        if elig == "Eligible":
-            recommendation += "✅ **Proceed:** Assign to Tier 1 Induction matching. Structural data aligned for CDISC/SDTM conversion.\\n"
-            recommendation += f"📑 **FDA PCCP Justification:** Algorithmic modifications tracked per *'{pccp_guidance}'*\\n"
+        # Parse output
+        if "<|assistant|>" in result:
+            output = result.split("<|assistant|>")[-1].strip()
         else:
-            recommendation += "⚠️ **Refer:** Shift subject to Tier Advancement Pathway (TAP). Subthreshold criteria met.\\n"
+            output = result.strip()
             
-        if ae == "High Risk":
-            recommendation += "🚨 **Safety Alert:** Enhanced Site-Level Monitoring required. Neutropenic risk flags triggered.\\n"
-            
-        return recommendation
+        return output
 
-# Initialize Knowledge Base
-with open('fda_compliance_docs.json', 'r') as f:
-    compliance_data = json.load(f)
-
-advisor = FDAAgenticAdvisor(compliance_data)
-print(f"✅ FDA Agentic Advisor Online. Knowledge Base initialized with {len(compliance_data)} regulatory vectors.")"""
+# Initialize the LangChain Agent
+advisor = LangChainFDAAdvisor('fda_compliance_docs.json')
+print("✅ LangChain Agentic Advisor Online.")"""
     nb.cells.append(nbf.v4.new_code_cell(agent_code))
 
     # --- CELL 7: Explanation & Code for Benchmarking ---
