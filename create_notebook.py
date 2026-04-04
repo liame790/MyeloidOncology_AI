@@ -24,7 +24,7 @@ This notebook implements the end-to-end clinical informatics framework described
 The implementation covers:
 *   **Clinical Data Analysis:** Foundation of data capture and continuity via synthetic cohorts.
 *   **Machine Learning Design:** GBDT for stratification, LSTM for temporal forecasting, and Logistic Regression for adverse event modeling.
-*   **Agentic AI Layer:** Automated regulatory reconciliation mapped to FDA 21 CFR Part 11.
+*   **Agentic AI Layer:** Automated regulatory reconciliation using LangChain, ChromaDB, and HuggingFace.
 *   **Performance Benchmarking:** Validating synthetic results against the paper's targets.
 """
     nb.cells.append(nbf.v4.new_markdown_cell(intro_md))
@@ -33,14 +33,10 @@ The implementation covers:
     md_2 = """## III. CLINICAL DATA ANALYSIS AND METHODS
 ### A. Foundation of Data Capture and Continuity
 
-**Methodology:**
-*   **Data Emulation:** We synthesize a dataset of 300 patient records mirroring the multivariate distributions found in the MyeloMATCH, Beat AML, and TCGA-LAML cohorts.
-*   **Clinical Parameters:** Encompasses dynamic variables such as Absolute Neutrophil Count (ANC), Platelet Count, Hemoglobin (Hb), and Bone Marrow Blast percentage.
-*   **Biomarker Mapping:** Incorporates critical molecular stratifiers: FLT3-ITD, IDH1, IDH2, and NPM1 mutations alongside overarching cytogenetic risk categories.
+**Methodology:** We synthesize a dataset of 300 patient records mirroring the multivariate distributions found in the MyeloMATCH, Beat AML, and TCGA-LAML cohorts, including clinical parameters (ANC, Platelets, Blast %) and biomarkers (FLT3-ITD, IDH1/2, NPM1).
 
-**Expected Output:**
-*   Verification of the data frame dimensions (300 records, 27 features).
-*   A localized preview of the synthetic electronic Case Report Forms (eCRFs)."""
+**Input:** Synthetic data generation parameters.  
+**Output:** A localized preview of the synthetic electronic Case Report Forms (eCRFs) dataframe, showing the shape (300 records, 27 features)."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_2))
 
     imports_code = """import pandas as pd
@@ -75,14 +71,10 @@ display(df.head())"""
     md_3 = """## IV. MACHINE LEARNING MODEL DESIGN
 ### A. Gradient Boosted Decision Trees (GBDT) for Eligibility Stratification
 
-**Methodology:**
-*   **Objective:** Assign patients to protocol-eligible treatment arms (or the Tier Advancement Pathway) based on real-time molecular and clinical presentation.
-*   **Algorithm:** Gradient Boosted Decision Trees (GBDT) are selected for their robustness in capturing non-linear interactions among heterogeneous predictors (e.g., age, cytogenetic risk, and mutational burden).
-*   **Interpretability:** Post-hoc SHAP (SHapley Additive exPlanations) analysis is deployed. As mandated by FDA guidance for AI/ML-enabled Software as a Medical Device (SaMD), SHAP ensures clinical plausibility by rendering the variable attribution mathematically transparent.
+**Methodology:** Gradient Boosted Decision Trees (GBDT) are selected for their robustness in capturing non-linear interactions among heterogeneous predictors. Post-hoc SHAP analysis is deployed for FDA compliance (transparency).
 
-**Expected Output:**
-*   **AUROC & Brier Score:** Quantification of discrimination capacity and calibration alignment.
-*   **SHAP Summary Plot:** Visual confirmation that features like `Blast_Pct_Base`, `ANC_Base`, and `FLT3_ITD` govern eligibility predictions."""
+**Input:** Clinical and biomarker features (Age, ECOG, Blast_Pct_Base, FLT3_ITD, etc.).  
+**Output:** AUROC and Brier Score metrics quantifying model performance, followed by a SHAP Summary Plot visualizing feature importance (e.g., Blast_Pct_Base driving eligibility)."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_3))
 
     gbdt_code = """# Features for Eligibility Stratification
@@ -121,14 +113,10 @@ plt.show()"""
     # --- CELL 4: Explanation & Code for LSTM ---
     md_4 = """### B. Long Short-Term Memory Networks (LSTM) for Temporal Response Prediction
 
-**Methodology:**
-*   **Objective:** Forecast early treatment outcomes, specifically the likelihood of achieving Complete Remission (CR/CRi) by Day 28.
-*   **Data Engineering:** Longitudinal vectors derived from serial Complete Blood Count (CBC) panels and bone marrow assessments captured at Day 1, Day 8, and Day 15.
-*   **Architecture:** LSTMs utilize memory cells and gating mechanisms to retain long-range temporal dependencies. This captures non-linear clearance kinetics (e.g., blast reduction rates and hematopoietic rebound).
+**Methodology:** LSTMs forecast early treatment outcomes (Complete Remission by Day 28) by utilizing memory cells to retain long-range temporal dependencies from Day 1, Day 8, and Day 15 CBC panels.
 
-**Expected Output:**
-*   Convergence of the BCE Loss over training epochs.
-*   The mean AUROC score on the test set, evidencing the network's capacity to model temporal recovery trajectories."""
+**Input:** Longitudinal vectors of ANC, Platelets, and Blast percentages reshaped into a 3D time-series tensor.  
+**Output:** The AUROC score on the test set, evidencing the network's capacity to model temporal recovery trajectories."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_4))
 
     lstm_code = """# Extract Temporal Sequence: Day 1, Day 8, Day 15 (ANC, Plt, Blast)
@@ -182,13 +170,10 @@ with torch.no_grad():
     # --- CELL 5: Explanation & Code for LogReg ---
     md_5 = """### C. Regularized Logistic Regression for Adverse Event Forecasting
 
-**Methodology:**
-*   **Objective:** Anticipate life-threatening hematologic toxicities, particularly early-onset Grade 3-4 Neutropenia.
-*   **Rationale:** The framework deliberately selects L2-Regularized Logistic Regression over black-box methods due to its extreme transparency, algorithmic stability under small sample sizes, and established acceptance in regulatory review processes (e.g., Data Safety Monitoring Boards).
-*   **Class Imbalance:** Evaluates baseline features (Age, Baseline ANC, Comorbidity Flags) against sparse outcome data.
+**Methodology:** L2-Regularized Logistic Regression is used to anticipate life-threatening hematologic toxicities (Grade 3-4 Neutropenia). Selected for extreme transparency and algorithmic stability under class imbalance.
 
-**Expected Output:**
-*   The AUROC score validating the model's predictive precision in capturing high-risk patients before the onset of severe clinical cytopenia."""
+**Input:** Scaled baseline features (Age, Baseline ANC, Comorbidity Flags).  
+**Output:** The AUROC score validating the model's predictive precision for adverse event risk."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_5))
 
     ae_code = """ae_features = ['Age', 'ANC_Base', 'Comorbidities']
@@ -213,14 +198,10 @@ print(f"Regularized LogReg Adverse Event Risk AUROC: {auc_a:.3f}")"""
     md_6 = """## II. E. Regulatory Documentation and Submission Engine
 ### Agentic Automation Layer (LangChain & HuggingFace Integration)
 
-**Methodology:**
-*   **Objective:** Accelerate regulatory preparedness and reduce administrative workload by linking predictive outputs directly to compliance standards.
-*   **Architecture:** Implements an LLM-driven autonomous agent using **LangChain**, **ChromaDB**, and **HuggingFace**. A Retrieval-Augmented Generation (RAG) architecture ingests internal clinical assignments and cross-references them with loaded FDA policy documents (e.g., Predetermined Change Control Plans).
-*   **Models:** Utilizes `all-MiniLM-L6-v2` for semantic embeddings and a local open-source LLM pipeline (`TinyLlama-1.1B-Chat`) to autonomously generate structured recommendations without relying on external API keys.
+**Methodology:** Implements an LLM-driven autonomous agent using LangChain, ChromaDB, and HuggingFace. A RAG architecture ingests FDA policy documents (Predetermined Change Control Plans). We utilize `all-MiniLM-L6-v2` for embeddings and a fast, lightweight open-source LLM (`HuggingFaceTB/SmolLM-135M-Instruct`) to execute locally on CPU without remote API dependencies.
 
-**Expected Output:**
-*   Initialization of the LangChain VectorStore.
-*   Loading of the HuggingFace LLM Pipeline."""
+**Input:** Path to `fda_compliance_docs.json` knowledge base.  
+**Output:** Initialization logs of the LangChain VectorStore and HuggingFace LLM Pipeline."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_6))
 
     agent_code = """from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
@@ -248,30 +229,28 @@ class LangChainFDAAdvisor:
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 2})
         
         # 3. Setup Local HuggingFace LLM Pipeline
-        print("Loading Local LLM (TinyLlama-1.1B) for Agentic Inference...")
+        # Using a lightweight fast model to ensure fast CPU inference within the notebook
+        print("Loading Local LLM (SmolLM-135M-Instruct) for Agentic Inference...")
         pipe = pipeline(
             "text-generation",
-            model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-            max_new_tokens=250,
+            model="HuggingFaceTB/SmolLM-135M-Instruct",
+            max_new_tokens=150,
             temperature=0.1,
             repetition_penalty=1.1,
-            device="cpu"  # Running on CPU for broad compatibility
+            device="cpu"
         )
         self.llm = HuggingFacePipeline(pipeline=pipe)
         
         # 4. Agentic Prompt Template
-        template = \"\"\"<|system|>
-You are an expert FDA Clinical Informatics Agent. You review patient clinical data, ML predictions, and FDA compliance guidelines to make clear, actionable clinical trial recommendations.
-Use the following FDA guidance as your regulatory framework:
-{context}
-</s>
-<|user|>
+        template = \"\"\"System: You are an expert FDA Clinical Informatics Agent. Review the patient data and ML predictions to provide a short clinical recommendation.
+Use this FDA guidance context: {context}
+
+User: 
 Patient Data: {patient_data}
 ML Predictions: {ml_results}
+Provide a short recommendation.
 
-Based on the above, provide a short, structured clinical recommendation. Ensure you state how it complies with the provided FDA guidance.
-</s>
-<|assistant|>
+Assistant: Based on the clinical data and ML predictions, here is the recommendation:
 \"\"\"
         self.prompt = PromptTemplate(template=template, input_variables=["context", "patient_data", "ml_results"])
         
@@ -279,7 +258,6 @@ Based on the above, provide a short, structured clinical recommendation. Ensure 
         # Retrieve context via RAG
         query = "FDA Predetermined Change Control Plan and AI/ML eligibility rules"
         relevant_docs = self.retriever.invoke(query)
-        # Using chr(10) instead of literal slash-n to avoid code generation parsing bugs
         context = chr(10).join([f"- {doc.page_content}" for doc in relevant_docs])
         
         # Format ML Results
@@ -289,13 +267,7 @@ Based on the above, provide a short, structured clinical recommendation. Ensure 
         chain = self.prompt | self.llm
         result = chain.invoke({"context": context, "patient_data": str(patient_data), "ml_results": ml_str})
         
-        # Parse output
-        if "<|assistant|>" in result:
-            output = result.split("<|assistant|>")[-1].strip()
-        else:
-            output = result.strip()
-            
-        return output
+        return result
 
 # Initialize the LangChain Agent
 advisor = LangChainFDAAdvisor('fda_compliance_docs.json')
@@ -305,13 +277,10 @@ print("✅ LangChain Agentic Advisor Online.")"""
     # --- CELL 7: Explanation & Code for Benchmarking ---
     md_7 = """## V. ML MODEL PERFORMANCE AND BENCHMARKING
 
-**Methodology:**
-*   Evaluating machine learning models in a precision-targeted clinical trial requires stringent benchmarking against published baselines.
-*   We map our synthetic model outputs against the target metrics published in Table I of the IEEE manuscript.
+**Methodology:** We map our synthetic model outputs against the target metrics published in Table I of the IEEE manuscript to validate systemic clinical robustness.
 
-**Expected Output:**
-*   A comparative DataFrame displaying our simulated AUROC versus the paper's empirical results.
-*   A localized graphical visualization emphasizing systemic clinical robustness."""
+**Input:** Computed AUROC scores from GBDT, LSTM, and LogReg.  
+**Output:** A comparative DataFrame and a Bar Chart visualization displaying our simulated AUROC versus the empirical results from the paper."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_7))
 
     bench_code = """benchmarks = pd.DataFrame({
@@ -337,18 +306,13 @@ plt.show()"""
     # --- CELL 8: Explanation & Code for Inference ---
     md_8 = """## VI. RESULTS AND DISCUSSION: END-TO-END INFERENCE
 
-**Methodology:**
-*   **Data Pipeline Execution:** A singular subject's raw diagnostic array is sequentially passed through the trained GBDT, LSTM, and Logistic Regression engines.
-*   **Decision Support Finalization:** The probability matrices are forwarded to the Agentic Automation Layer. 
-*   **Traceability:** This outputs a human-readable, regulatory-defensible clinical action plan, demonstrating how the system operates at the intersection of oncology and informatics.
+**Methodology:** A singular subject's raw diagnostic array is sequentially passed through the trained GBDT, LSTM, and Logistic Regression engines. The probability matrices are forwarded to the LangChain Agentic Automation Layer, which retrieves FDA compliance rules and generates an action plan.
 
-**Expected Output:**
-*   A comprehensive, clinically formatted Markdown summary indicating the subject's status, predicted trajectories, and safety protocols."""
+**Input:** Clinical features of Patient 10 and their calculated predictive probabilities.  
+**Output:** A human-readable, regulatory-defensible clinical action plan generated dynamically by the local HuggingFace LLM, demonstrating AI-driven decision support."""
     nb.cells.append(nbf.v4.new_markdown_cell(md_8))
 
-    inf_code = """from IPython.display import Markdown
-
-# Select Subject: Target a patient with high-risk markers for demonstration (Subject 10)
+    inf_code = """# Select Subject: Target a patient with high-risk markers for demonstration (Subject 10)
 subject_idx = 10 
 p_data = df.iloc[subject_idx].to_dict()
 
@@ -366,9 +330,22 @@ p_ae_prob = model_lr.predict_proba(p_ae_feat)[0, 1]
 # Consolidate Intelligence
 ml_intelligence = {'elig_prob': p_elig_prob, 'resp_prob': p_resp_prob, 'ae_prob': p_ae_prob}
 
-# Agentic Evaluation
+print(f"--- Processing Patient {p_data['PatientID']} ---")
+print(f"GBDT Eligibility Probability: {p_elig_prob:.2f}")
+print(f"LSTM Response Forecast Probability: {p_resp_prob:.2f}")
+print(f"LogReg AE Risk Probability: {p_ae_prob:.2f}")
+print("\\n--- Agentic FDA Compliance Recommendation ---")
+
+# Agentic Evaluation via LLM
 final_report = advisor.recommend(p_data, ml_intelligence)
-Markdown(final_report)"""
+
+# Extract only the assistant's response to clean up output
+if "Assistant:" in final_report:
+    clean_report = final_report.split("Assistant:")[-1].strip()
+else:
+    clean_report = final_report.strip()
+
+print(clean_report)"""
     nb.cells.append(nbf.v4.new_code_cell(inf_code))
 
     # Write notebook
@@ -377,4 +354,4 @@ Markdown(final_report)"""
 
 if __name__ == "__main__":
     create_nb()
-    print("Notebook 'MyeloidOncology_AI_Framework.ipynb' successfully generated with IEEE structuring.")
+    print("Notebook 'MyeloidOncology_AI_Framework.ipynb' successfully generated.")
