@@ -1,0 +1,22 @@
+[
+    {
+        "doc_id": "FDA-21-CFR-11",
+        "title": "21 CFR Part 11 - Electronic Records; Electronic Signatures",
+        "content": "This part sets forth the criteria under which the agency considers electronic records, electronic signatures, and handwritten signatures executed to electronic records to be trustworthy, reliable, and generally equivalent to paper records and handwritten signatures executed on paper."
+    },
+    {
+        "doc_id": "FDA-AI-ML-GUIDANCE",
+        "title": "Marketing Submission Recommendations for AI/ML-Enabled Device Software Functions",
+        "content": "For AI/ML-enabled software, the FDA recommends a Predetermined Change Control Plan (PCCP) that includes a description of the planned modifications, the protocol for implementing those modifications, and an impact assessment."
+    },
+    {
+        "doc_id": "MYELOMATCH-ELIGIBILITY",
+        "title": "MyeloMATCH Master Protocol Eligibility Criteria",
+        "content": "Standard eligibility for MyeloMATCH induction studies requires ECOG performance status 0-2, bone marrow blast percentage >= 20%, absolute neutrophil count >= 0.5 x 10^9/L, and platelet count >= 50 x 10^9/L. Specific sub-protocols may have additional biomarker-driven requirements such as FLT3 or IDH mutations."
+    },
+    {
+        "doc_id": "ICH-GCP-E6",
+        "title": "ICH E6(R2) Good Clinical Practice",
+        "content": "Good Clinical Practice (GCP) is an international ethical and scientific quality standard for designing, conducting, recording, and reporting trials that involve the participation of human subjects."
+    }
+]
