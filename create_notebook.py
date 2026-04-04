@@ -29,7 +29,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score, brier_score_loss, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.linear_model import LogisticRegression
-import xgboost as xgb
+from sklearn.ensemble import GradientBoostingClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -57,15 +57,15 @@ elig_features = ['Age', 'ECOG', 'Blast_Pct_Base', 'ANC_Base', 'Plt_Base', 'Hb_Ba
 X_elig = df[elig_features]
 y_elig = df['Eligible']
 
-# Encode categorical (if any, though here they are mostly numeric/binary)
+# Encode categorical
 # Cytogenetic_Risk is categorical
 le = LabelEncoder()
 X_elig['Cytogenetic_Risk'] = le.fit_transform(df['Cytogenetic_Risk'])
 
 X_train_e, X_test_e, y_train_e, y_test_e = train_test_split(X_elig, y_elig, test_size=0.2, random_state=seed)
 
-# Train XGBoost
-model_gbdt = xgb.XGBClassifier(n_estimators=100, max_depth=4, learning_rate=0.1, random_state=seed)
+# Train GradientBoostingClassifier (Scikit-learn)
+model_gbdt = GradientBoostingClassifier(n_estimators=100, max_depth=4, learning_rate=0.1, random_state=seed)
 model_gbdt.fit(X_train_e, y_train_e)
 
 # Eval
@@ -74,11 +74,11 @@ auc_e = roc_auc_score(y_test_e, y_pred_e)
 brier_e = brier_score_loss(y_test_e, y_pred_e)
 
 print(f"GBDT Eligibility AUROC: {auc_e:.3f}")
-print(f"GBDT Calibration (Brier): {brier_e:.40f}")
+print(f"GBDT Calibration (Brier): {brier_e:.4f}")
 
 # SHAP Interpretability
-explainer = shap.TreeExplainer(model_gbdt)
-shap_values = explainer.shap_values(X_test_e)
+explainer = shap.Explainer(model_gbdt)
+shap_values = explainer(X_test_e)
 shap.summary_plot(shap_values, X_test_e, plot_type="bar", show=False)
 plt.title("SHAP Feature Importance for Eligibility")
 plt.show()"""
